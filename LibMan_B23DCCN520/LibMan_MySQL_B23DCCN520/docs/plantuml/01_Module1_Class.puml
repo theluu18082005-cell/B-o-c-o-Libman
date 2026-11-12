@@ -1,0 +1,112 @@
+@startuml
+top to bottom direction
+scale 2
+hide circle
+hide empty members
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam backgroundColor white
+hide stereotype
+skinparam linetype ortho
+skinparam defaultFontName "Liberation Sans"
+skinparam defaultFontSize 15
+skinparam nodesep 27
+skinparam ranksep 34
+skinparam class {
+  BackgroundColor #82CCEB
+  HeaderBackgroundColor #82CCEB
+  BorderColor #293640
+  FontColor #121B22
+  FontStyle bold
+  AttributeFontColor #121B22
+  ArrowColor #293640
+  StereotypeFontColor #293640
+  AttributeIconSize 0
+}
+class "<&file> ReaderHomeView0.jsp" as Home <<JSP>> {
+  - account : Member0
+  - lnkRegisterCard : link
+}
+class "<&file> LibraryCardRegistrationView0.jsp" as CardView <<JSP>> {
+  - form : Reader0.Form
+  - card : LibraryCard0
+  - created : boolean
+  - existing : boolean
+  - errors : Map
+  - fullName : Input
+  - dateOfBirth : DateInput
+  - address : Input
+  - phoneNumber : Input
+  - email : Input
+  - cardType : Select
+  - btnAdd : submit
+  - lnkCancel : link
+  - lnkReaderHome : link
+}
+class LibManServlet0 <<control>> {
+  - readers : ReaderDAO0
+  - cards : LibraryCardDAO0
+  --
+  - card(req, res, member : Member0) : void
+  - register(req, res, member : Member0) : void
+}
+class Member0 <<record>> {
+  - id : long
+  - fullName : String
+  - role : Role
+}
+class ReaderDAO0 <<DAO>> {
+  + getReaderInformation(readerId : long) : Reader0
+  + validateReaderInformation(f : Reader0.Form) : Map<String, String>
+  ~ updateReaderInformation(c : Connection, readerId : long, f : Reader0.Form) : void
+}
+class LibraryCardDAO0 <<DAO>> {
+  - readers : ReaderDAO0
+  --
+  + getLibraryCard(readerId : long) : Optional<LibraryCard0>
+  + registerLibraryCard(readerId : long, form : Reader0.Form) : LibraryCard0
+}
+class Database0 {
+  + {static} open() : Connection
+}
+class Reader0 <<record>> {
+  - id : long
+  - readerCode : String
+  - fullName : String
+  - dateOfBirth : LocalDate
+  - address : String
+  - phoneNumber : String
+  - email : String
+}
+class "Reader0.Form" as ReaderForm <<record>> {
+  - fullName : String
+  - dateOfBirth : String
+  - address : String
+  - phoneNumber : String
+  - email : String
+  - cardType : String
+}
+class LibraryCard0 <<record>> {
+  - cardNumber : String
+  - cardType : String
+  - registrationDate : LocalDate
+  - expirationDate : LocalDate
+  - status : String
+}
+Home -right- CardView
+Home ..> Member0
+Home ..> LibManServlet0
+CardView ..> LibManServlet0
+LibManServlet0 --> ReaderDAO0
+LibManServlet0 --> LibraryCardDAO0
+ReaderDAO0 -[hidden]right-> LibraryCardDAO0
+LibraryCardDAO0 -left-> ReaderDAO0
+ReaderDAO0 ..> Reader0
+ReaderDAO0 ..> ReaderForm
+LibraryCardDAO0 ..> LibraryCard0
+LibraryCardDAO0 ..> ReaderForm
+Reader0 -[hidden]right-> ReaderForm
+ReaderForm -[hidden]right-> LibraryCard0
+ReaderDAO0 -[dashed,#175581,thickness=2]-> Database0 : open()
+LibraryCardDAO0 -[dashed,#175581,thickness=2]-> Database0 : open()
+@enduml

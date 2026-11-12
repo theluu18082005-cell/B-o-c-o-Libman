@@ -1,0 +1,55 @@
+@startuml
+actor "Nhân viên quản lí" as M
+boundary "GDManagerHome0\nManagerHomeView0.jsp" as H
+boundary "GDReportSelection0\nReportSelectionView0.jsp" as P
+boundary "GDDocumentStatistics0\nDocumentStatisticsView0.jsp" as T
+boundary "GDDocumentBorrowingHistory0\nDocumentBorrowingHistoryView0.jsp" as B
+boundary "GDLoanDetails0\nLoanDetailsView0.jsp" as L
+control LibManServlet0 as S
+participant DateRange0 as R
+participant DocumentStatisticsDAO0 as D
+participant LoanDAO0 as Q
+M -> H : Chọn Xem báo cáo
+H -> S : GET /manager/reports
+S -> P : forward()
+P --> M : Hiển thị các loại báo cáo
+M -> P : Chọn Thống kê tài liệu theo số lần mượn
+P -> S : GET /manager/statistics
+S -> T : forward()
+T --> M : Hiển thị bộ lọc và bảng trống
+M -> T : Nhập hai ngày, bấm Xem thống kê
+T -> S : GET /manager/statistics (from, to)
+S -> R : validateDateRange(from, to)
+R --> S : kết quả
+alt Khoảng ngày hợp lệ
+  S -> D : getDocumentBorrowingStatistics(range)
+  D --> S : danh sách DocumentStatistics0
+  S -> T : forward(range, items)
+  T --> M : Hiển thị bảng thống kê
+else Khoảng ngày không hợp lệ
+  S -> T : forward(from, to, errors)
+  T --> M : Báo lỗi tại ô ngày
+end
+opt Bảng thống kê có kết quả
+M -> T : Chọn tên tài liệu có trong bảng
+T -> S : GET /manager/history (document, from, to)
+S -> Q : getDocumentBorrowingHistory(documentId, range)
+Q --> S : Loan0.History
+S -> B : forward(range, history)
+B --> M : Hiển thị lịch sử mượn
+M -> B : Chọn mã phiếu
+B -> S : GET /manager/loan (document, from, to, loan)
+S -> Q : getLoanDetails(loanCode, documentId, range)
+Q --> S : Loan0.Detail
+S -> L : forward(range, documentId, detail)
+L --> M : Hiển thị phiếu và toàn bộ bản tài liệu
+opt Quay lại
+  M -> L : Bấm Quay lại
+  L -> S : GET /manager/history (document, from, to)
+  S -> Q : getDocumentBorrowingHistory(documentId, range)
+  Q --> S : Loan0.History
+  S -> B : forward(range, history)
+  B --> M : Hiển thị lại lịch sử mượn
+end
+end
+@enduml

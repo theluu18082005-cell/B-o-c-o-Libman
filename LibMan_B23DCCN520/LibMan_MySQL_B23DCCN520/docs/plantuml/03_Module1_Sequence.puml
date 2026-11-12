@@ -1,0 +1,38 @@
+@startuml
+actor "Bạn đọc" as Reader
+boundary "GDReaderHome0\nReaderHomeView0.jsp" as Home
+boundary "GDLibraryCardRegistration0\nLibraryCardRegistrationView0.jsp" as Form
+control LibManServlet0 as S
+participant ReaderDAO0 as R
+participant LibraryCardDAO0 as C
+Reader -> Home : Chọn Đăng kí làm thẻ bạn đọc
+Home -> S : GET /reader/card
+S -> R : getReaderInformation(readerId)
+R --> S : Reader0
+S -> C : getLibraryCard(readerId)
+C --> S : chưa có thẻ
+S -> Form : forward(form)
+Form --> Reader : Hiển thị biểu mẫu điền sẵn
+Reader -> Form : Kiểm tra hồ sơ, chọn loại thẻ, bấm Thêm
+Form -> S : POST /reader/card
+S -> C : getLibraryCard(readerId)
+C --> S : chưa có thẻ
+S -> R : validateReaderInformation(form)
+R --> S : hợp lệ
+S -> C : registerLibraryCard(readerId, form)
+C -> R : validateReaderInformation(form)
+R --> C : hợp lệ
+C -> C : kiểm tra lại thẻ trong giao dịch
+C -> R : updateReaderInformation(connection, readerId, form)
+R --> C : hồ sơ đã cập nhật
+C -> C : INSERT thẻ và commit
+C --> S : LibraryCard0
+S --> Reader : 303 → /reader/card
+Reader -> S : GET /reader/card
+S -> R : getReaderInformation(readerId)
+R --> S : hồ sơ mới
+S -> C : getLibraryCard(readerId)
+C --> S : thẻ đã lưu
+S -> Form : forward(form, card, created)
+Form --> Reader : Thông báo thành công và thông tin thẻ
+@enduml

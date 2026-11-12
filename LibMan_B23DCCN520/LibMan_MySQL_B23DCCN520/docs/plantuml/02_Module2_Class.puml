@@ -1,0 +1,143 @@
+@startuml
+top to bottom direction
+scale 2
+hide circle
+hide empty members
+skinparam shadowing false
+skinparam roundcorner 0
+skinparam backgroundColor white
+hide stereotype
+skinparam linetype ortho
+skinparam defaultFontName "Liberation Sans"
+skinparam defaultFontSize 15
+skinparam nodesep 26
+skinparam ranksep 27
+skinparam class {
+  BackgroundColor #82CCEB
+  HeaderBackgroundColor #82CCEB
+  BorderColor #293640
+  FontColor #121B22
+  FontStyle bold
+  AttributeFontColor #121B22
+  ArrowColor #293640
+  StereotypeFontColor #293640
+  AttributeIconSize 0
+}
+class "<&file> ManagerHomeView0.jsp" as Home <<JSP>> {
+  - account : Member0
+  - lnkReports : link
+}
+class "<&file> ReportSelectionView0.jsp" as Reports <<JSP>> {
+  - lnkDocumentStatistics : link
+  - lnkBack : link
+}
+class "<&file> DocumentStatisticsView0.jsp" as Stats <<JSP>> {
+  - from : DateInput
+  - to : DateInput
+  - range : DateRange0
+  - items : List<DocumentStatistics0>
+  - errors : Map
+  - tblStatistics : Table
+  - btnStatistics : submit
+  - lnkDocument : link
+  - lnkBack : link
+}
+class "<&file> DocumentBorrowingHistoryView0.jsp" as History <<JSP>> {
+  - range : DateRange0
+  - history : Loan0.History
+  - tblLoanHistory : Table
+  - lnkLoan : link
+  - lnkBack : link
+}
+class "<&file> LoanDetailsView0.jsp" as Detail <<JSP>> {
+  - range : DateRange0
+  - documentId : long
+  - detail : Loan0.Detail
+  - tblLoanItems : Table
+  - lnkBack : link
+}
+class LibManServlet0 <<control>> {
+  - stats : DocumentStatisticsDAO0
+  - loans : LoanDAO0
+  --
+  - statistics(req, res) : void
+  - history(req, res) : void
+  - loan(req, res) : void
+}
+class DateRange0 <<record>> {
+  - from : LocalDate
+  - to : LocalDate
+  --
+  + {static} validateDateRange(from : String, to : String)\n    : Map<String, String>
+}
+class DocumentStatisticsDAO0 <<DAO>> {
+  + getDocumentBorrowingStatistics(range : DateRange0)\n    : List<DocumentStatistics0>
+}
+class LoanDAO0 <<DAO>> {
+  + getDocumentBorrowingHistory(documentId : long,\n    range : DateRange0) : Loan0.History
+  + getLoanDetails(loanCode : String, documentId : long,\n    range : DateRange0) : Loan0.Detail
+}
+class DocumentStatistics0 <<record>> {
+  - documentId : long
+  - documentCode : String
+  - title : String
+  - documentType : String
+  - author : String
+  - borrowCount : int
+}
+class Loan0 <<record>> {
+  - id : long
+  - loanCode : String
+  - loanDate : LocalDate
+  - readerCode : String
+  - readerName : String
+  - librarianName : String
+}
+class "Loan0.History" as LoanHistory <<record>> {
+  - documentId : long
+  - documentCode : String
+  - title : String
+  - documentType : String
+  - loans : List<Loan0>
+}
+class "Loan0.Detail" as LoanDetail <<record>> {
+  - loan : Loan0
+  - lines : List<Loan0.Line>
+}
+class "Loan0.Line" as LoanLine <<record>> {
+  - copyCode : String
+  - documentCode : String
+  - title : String
+  - dueDate : LocalDate
+  - conditionOnLoan : String
+  - returned : boolean
+}
+class Database0 {
+  + {static} open() : Connection
+}
+Home -right- Reports
+Reports -right- Stats
+Stats -right- History
+History -right- Detail
+Home ..> LibManServlet0
+Reports ..> LibManServlet0
+Stats ..> LibManServlet0
+History ..> LibManServlet0
+Detail ..> LibManServlet0
+LibManServlet0 --> DocumentStatisticsDAO0
+LibManServlet0 --> LoanDAO0
+LibManServlet0 ..> DateRange0
+DateRange0 -[hidden]right-> DocumentStatisticsDAO0
+DocumentStatisticsDAO0 -[hidden]right-> LoanDAO0
+DocumentStatisticsDAO0 ..> DocumentStatistics0
+LoanDAO0 ..> LoanHistory
+LoanDAO0 ..> LoanDetail
+DocumentStatisticsDAO0 -[dashed,#175581,thickness=2]-> Database0 : open()
+LoanDAO0 -[dashed,#175581,thickness=2]-> Database0 : open()
+DocumentStatistics0 -[hidden]right-> LoanHistory
+LoanHistory -[hidden]right-> LoanDetail
+LoanHistory --> Loan0
+LoanDetail --> Loan0
+LoanDetail --> LoanLine
+Loan0 -[hidden]right-> LoanLine
+@enduml

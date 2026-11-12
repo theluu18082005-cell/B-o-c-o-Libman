@@ -1,0 +1,45 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="vn.ptit.libman.model.*,java.util.*" %>
+<%@ page import="vn.ptit.libman.web.Html0" %>
+<%
+String base = Html0.e(request.getContextPath());
+Member0 account = (Member0) session.getAttribute("member");
+String csrf = Html0.e(session.getAttribute("csrf"));
+String pageTitle = Html0.e(request.getAttribute("title"));
+Map<?,?> errors = request.getAttribute("errors") instanceof Map<?,?> ? (Map<?,?>) request.getAttribute("errors") : Collections.emptyMap();
+String message = Html0.e(request.getAttribute("message"));
+boolean readerRole = account != null && account.role() == Member0.Role.READER;
+boolean home = "GDReaderHome0".equals(boundary) || "GDManagerHome0".equals(boundary);
+%>
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title><%= pageTitle %> · LibMan</title>
+  <link rel="stylesheet" href="<%= base %>/assets/libman.css">
+</head>
+<body>
+<div class="wrap window">
+  <header class="titlebar"><span><%= Html0.e(boundary) %> — <%= pageTitle %></span><span class="brand">LibMan</span></header>
+  <% if (account != null) { %>
+  <nav class="menu" aria-label="Chức năng chính">
+    <% if (readerRole) { %>
+    <span class="inactive">Tìm kiếm tài liệu <small>Chưa cài đặt</small></span>
+    <span class="inactive">Mượn tài liệu <small>Tại quầy</small></span>
+    <span class="inactive">Trả tài liệu <small>Tại quầy</small></span>
+    <% if (home) { %>
+    <a class="enabled" href="<%= base %>/reader/card">Đăng kí làm thẻ bạn đọc</a>
+    <% } else { %>
+    <span class="active" aria-current="page">Đăng kí làm thẻ bạn đọc</span>
+    <% } %>
+    <% } else if (home) { %>
+    <a class="enabled" href="<%= base %>/manager/reports">Xem báo cáo</a>
+    <% } else { %>
+    <span class="active">Xem báo cáo</span>
+    <% } %>
+    <form method="post" action="<%= base %>/logout">
+      <input type="hidden" name="csrf" value="<%= csrf %>"><button type="submit">Đăng xuất</button>
+    </form>
+  </nav>
+  <% } %>
+  <main>
+  <% if (!message.isEmpty()) { %><p class="notice warn" role="alert"><%= message %></p><% } %>

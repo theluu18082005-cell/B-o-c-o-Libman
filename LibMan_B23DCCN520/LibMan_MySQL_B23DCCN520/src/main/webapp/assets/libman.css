@@ -1,0 +1,72 @@
+:root {
+  font-family: Arial, sans-serif;
+  color: #172333;
+  background: #f0f2f5;
+  font-size: 16px;
+  --line: #a6b0be;
+  --blue: #285f99;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+.window { max-width: 920px; margin: 28px auto; border: 1px solid #52667c; background: #fff; }
+.titlebar { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 11px 18px; background: var(--blue); color: white; font-weight: 700; }
+.brand { font-size: 14px; }
+.menu { display: flex; flex-wrap: wrap; background: #e9eef5; border-bottom: 1px solid var(--line); }
+.menu > * { flex: 1 1 auto; display: flex; justify-content: center; align-items: center; gap: 6px; padding: 9px 12px; min-height: 43px; border-right: 1px solid var(--line); text-align: center; font-size: 14px; }
+.menu > :last-child { border-right: 0; }
+.menu form { margin: 0; padding: 0; }
+.menu button { width: 100%; height: 100%; min-height: 43px; border: 0; border-radius: 0; color: #172333; background: transparent; }
+.menu a.enabled, .menu .active { background: #dcefd6; color: #174418; font-weight: 700; }
+.menu small, .report-list small { color: #475569; font-size: 12px; }
+main { padding: 22px 24px 25px; min-height: 218px; }
+h1 { font-size: 23px; margin: 0 0 12px; }
+h2 { font-size: 17px; margin: 0 0 11px; }
+p { margin: 0 0 10px; line-height: 1.4; }
+a { color: #174e87; text-underline-offset: 2px; }
+button, .button { display: inline-block; border: 1px solid var(--line); border-radius: 3px; padding: 8px 13px; background: #e9eef5; color: #172333; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.secondary { background: #f9edcc; border-color: #a98b43; }
+:where(a,button,input,select):focus-visible { outline: 3px solid #1a5a9c; outline-offset: 3px; }
+.menu button:hover, .button:hover, .primary:hover, a.enabled:hover { filter: brightness(.93); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.report-list { list-style: none; margin: 15px 0 0; padding: 0; border: 1px solid var(--line); max-width: 710px; }
+.report-list li { padding: 10px 12px; display: flex; gap: 10px; justify-content: space-between; align-items: center; }
+.report-list li:first-child { background: #eef5eb; font-weight: 700; }
+.report-list li + li { border-top: 1px solid var(--line); }
+.hero { margin-bottom: 15px; }
+.panel { margin-bottom: 14px; }
+.feature { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.fields, .facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px 14px; }
+.wide { grid-column: 1/-1; }
+label { display: block; font-size: 14px; font-weight: 600; }
+input:not([type=hidden]), select { display: block; width: 100%; margin-top: 4px; padding: 7px 8px; font: inherit; color: #172333; background: #fff; border: 1px solid #7e8b9b; border-radius: 2px; }
+.filters { display: flex; align-items: start; flex-wrap: wrap; gap: 14px; }
+.filters label { min-width: 160px; }
+.filters button { margin-top: 19px; }
+.facts { margin: 0; }
+.facts > div { border: 1px solid var(--line); padding: 8px; }
+.facts dt { font-size: 13px; color: #475569; }
+.facts dd { margin: 3px 0 0; }
+.scroll { overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 8px 7px; border: 1px solid #929eac; text-align: left; }
+th { background: #dce6f4; }
+tbody tr:nth-child(even) { background: #f4f7fa; }
+.num { text-align: right; }
+.code { white-space: nowrap; }
+.empty { color: #475569; }
+.badge { display: inline-block; border: 1px solid #a3b5c6; background: #eef3f8; padding: 3px 7px; font-size: 13px; }
+.notice { border: 1px solid var(--line); padding: 8px 10px; margin-bottom: 14px; }
+.warn { background: #fff0dc; color: #663600; }
+.error { color: #9a2b25; display: block; margin-top: 4px; }
+.success { background: #e6f3df; color: #214e23; }
+.login { max-width: 390px; margin: 0 auto; }
+.stack { display: grid; gap: 10px; }
+.demo { margin-top: 14px; padding: 9px 12px; background: #f1f4f7; font-size: 13px; }
+.demo p { margin: 4px 0 0; }
+@media (max-width: 650px) {
+  .window { margin: 10px; }
+  main { padding: 14px; }
+  .fields, .facts { grid-template-columns: 1fr; }
+  .feature { flex-wrap: wrap; }
+}
